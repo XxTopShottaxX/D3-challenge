@@ -13,7 +13,7 @@ var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
 // SVG wrapper, append an SVG group 
-var svg = d3.select(".chart")
+var svg = d3.select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -59,16 +59,34 @@ d3.csv("assets/data/data.csv").then(function(newsData) {
 
     // Create Circles
     // 
-    var circlesGroup = chartGroup.selectAll("circle")
-    .data(newsData)
-    .enter()
-    .append("circle")
-    .attr("cx", d => xLinearScale(d.hair_length))
-    .attr("cy", d => yLinearScale(d.num_hits))
+    var circlesGroup = chartGroup.selectAll("circle").data(newsData).enter()
+
+    circlesGroup.append("circle")
+    .attr("cx", d => xLinearScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "15")
     .attr("fill", "blue")
     .attr("opacity", ".5");
 
+    circlesGroup.append("text")
+    .text(function(data){
+        return data.abbr;
+    })
+    .attr("dx", d => xLinearScale(d.poverty))
+      .attr("dy", d => yLinearScale(d.healthcare)+10/2.5)
+      .attr("font-size","9")
+      .attr("class","stateText")
+      .on("mouseover", function(data, index) {
+        toolTip.show(data,this);
+      d3.select(this).style("stroke","#323232")
+      
+      })
+      .on("mouseout", function(data, index) {
+          toolTip.hide(data,this)
+       d3.select(this).style("stroke","#e3e3e3")
+      });
+    
+    
     // Initialize tool tip
     // 
     var toolTip = d3.tip()
